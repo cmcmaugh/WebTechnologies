@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Flickr API example</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
+    <style>
+        html {
+          font-family: 'helvetica neue', helvetica, arial, sans-serif;
+        }
+        
+        body {
+          width: 800px;
+          margin: 0 auto;
+        }
+        
+        h1, h2 {
+          font-family: 'Faster One', cursive;
+        }
+        
+        /* header styles */
+        
+        h1 {
+          font-size: 4rem;
+          text-align: center;
+        }
+        
+        header p {
+          font-size: 1.3rem;
+          font-weight: bold;
+          text-align: center;
+        }
+        
+        /* section styles */
+        
+        section article {
+          width: 33%;
+          float: left;
+        }
+        
+        section p {
+          margin: 5px 0;
+          text-align: center;
+        }
+        
+        section ul {
+          margin-top: 0;
+        }
+        
+        h2 {
+          font-size: 2.5rem;
+          letter-spacing: -5px;
+          margin-bottom: 10px;
+        }
+    </style>
+  </head>
+
+  <body>
+
+      <header>
+
+      </header>
+
+      <section>
+
+      </section>
+
+      <script>
+        async function populate() {
+	// set the URL to where the JSON file is
+  const endpoint = 'https://www.flickr.com/services/rest/';
+  const apiKey = 'afb9ad2ac243ac52d71d6f92671a3acf';
+  const photo_id = '53303049000';
+    
+    
+  const requestURL = endpoint + '?method=flickr.photos.getInfo&api_key=' + apiKey + '&photo_id=' + photo_id + '&format=json&nojsoncallback=1'; 
+  
+	// creating a request object with the URL parameter set above
+  const request = new Request(requestURL);
+
+	//fetch function - Javascript function to perform a web HTTP GET Request
+	const response = await fetch(request);
+	// the response is the content of the above URL and is assigned to superHeroesText  
+	//Here,as far as JavaScript is concerned, it is not an object ( we cannot access properties using dot (.) notation, it is just a String 
+  const photoInfoText = await response.text();
+  
+	//Now we deserialise the String into an object   variable superHeroes now contains the superHeroes object
+  const photoInfo = JSON.parse(photoInfoText);
+  
+  
+  populatePhotoInfo(photoInfo);
+  populateImage(photoInfo);
+}
+
+function populatePhotoInfo(obj) {
+		const header = document.querySelector('header');
+  	const myH1 = document.createElement('h1');
+  	myH1.textContent = obj.photo.title._content;  // from JSON object
+  	header.appendChild(myH1);
+
+    const myPara = document.createElement('p');
+  	myPara.textContent = 'Taken: ' + obj.photo.dates.taken;
+  	header.appendChild(myPara);
+    
+    const myPara2 = document.createElement('p');
+  	myPara2.textContent = 'By: ' + obj.photo.owner.realname;
+  	header.appendChild(myPara2);
+}
+
+function populateImage(obj) {
+	 const section = document.querySelector('section');
+   const myPara1 = document.createElement('p');
+   const img = document.createElement('img');
+   
+   imgSrcUrl = "https://live.staticflickr.com/" + obj.photo.server + "/" + obj.photo.id +  "_" + obj.photo.secret + "_w.jpg";
+   console.log(imgSrcUrl);
+   
+   img.setAttribute('src', imgSrcUrl);
+   img.setAttribute('alt', obj.photo.description._content);
+   
+   section.appendChild(myPara1);
+   myPara1.appendChild(img);
+   
+}
+
+
+populate();
+
+      </script>
+  </body>
+</html>
